@@ -1,6 +1,7 @@
 package discordgocmds
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -17,6 +18,7 @@ type CmdHandler struct {
 	databaseMiddleware     DatabaseMiddleware
 	registeredCmds         map[string]Command
 	registeredCmdInstances []Command
+	logger                 *logger
 }
 
 // New creates a new instance of CmdHandler by passing
@@ -29,6 +31,7 @@ func New(session *discordgo.Session, dbMiddleware DatabaseMiddleware, options *C
 		databaseMiddleware:     dbMiddleware,
 		registeredCmds:         make(map[string]Command),
 		registeredCmdInstances: make([]Command, 0),
+		logger:                 newLogger(),
 	}
 	c.discordSession.AddHandler(c.messageHandler)
 	c.discordSession.AddHandler(c.readyHandler)
@@ -44,15 +47,29 @@ func (c *CmdHandler) RegisterCommand(cmd Command) {
 	}
 }
 
+//////// private functions ////////
+
+func (c *CmdHandler) sendEmbedError(chanID, body, title string) (*discordgo.Message, error) {
+	emb := &discordgo.MessageEmbed{
+		Color:       cErrorColor,
+		Description: body,
+		Title:       title,
+	}
+	return c.discordSession.ChannelMessageSendEmbed(chanID, emb)
+}
+
 //////// discordgo event handlers ////////
 
 func (c *CmdHandler) messageHandler(s *discordgo.Session, e *discordgo.MessageCreate) {
 	if e.Message.Author.ID == s.State.User.ID {
 		return
 	}
+	if !c.options.ReactToBots && e.Message.Author.Bot {
+		return
+	}
 	channel, err := s.Channel(e.ChannelID)
 	if err != nil {
-		// TODO: Do some logging stuff
+		c.logger.e.Printf("Failed getting discord channel from ID (%s): %s", e.ChannelID, err.Error())
 		return
 	}
 	if channel.Type != discordgo.ChannelTypeGuildText {
@@ -60,7 +77,7 @@ func (c *CmdHandler) messageHandler(s *discordgo.Session, e *discordgo.MessageCr
 	}
 	guildPrefix, err := c.databaseMiddleware.GetGuildPrefix(e.GuildID)
 	if err != nil {
-		// TODO: Do some logging stuff
+		c.logger.e.Printf("Failed fetching guild prefix from database: %s", err.Error())
 	}
 
 	var pre string
@@ -91,16 +108,16 @@ func (c *CmdHandler) messageHandler(s *discordgo.Session, e *discordgo.MessageCr
 		}
 		hasPerm, err := c.permHandler.CheckUserPermission(cmdArgs, cmdInstance)
 		if err != nil {
-			// TODO: Print error message for failed permission check
+			c.sendEmbedError(channel.ID, fmt.Sprintf("Failed getting permission von database: ```\n%s\n```", err.Error()), "Permission Error")
 			return
 		}
 		if !hasPerm {
-			// TODO: Send missing permission message to discord channel
+			c.sendEmbedError(channel.ID, "You are not permitted to use this command!", "Missing permission")
 			return
 		}
 		err = cmdInstance.Exec(cmdArgs)
 		if err != nil {
-			// TODO: Send error message to discord channel
+			c.sendEmbedError(channel.ID, fmt.Sprintf("Failed executing command: ```\n%s\n```", err.Error()), "Command execution failed")
 		}
 	}
 }

@@ -9,6 +9,7 @@ type CmdHandlerOptions struct {
 	DefaultColor         int
 	InvokeToLower        bool
 	ParseMsgEdit         bool
+	ReactToBots          bool
 }
 
 // NewCmdHandlerOptions creates a new instance
@@ -22,5 +23,6 @@ func NewCmdHandlerOptions() *CmdHandlerOptions {
 		DefaultColor:         0x039BE5,
 		InvokeToLower:        true,
 		ParseMsgEdit:         true,
+		ReactToBots:          false,
 	}
 }
