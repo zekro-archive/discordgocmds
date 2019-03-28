@@ -2,7 +2,7 @@ package main
 
 type TestDatabase struct{}
 
-func (db *TestDatabase) GetUserPermissionLevel(userID string) (int, error) {
+func (db *TestDatabase) GetUserPermissionLevel(userID string, roles []string) (int, error) {
 	return 5, nil
 }
 

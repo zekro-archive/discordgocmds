@@ -1,5 +1,9 @@
 package discordgocmds
 
+import (
+	"github.com/bwmarrin/discordgo"
+)
+
 // PermissionHandler describes a struct handling
 // permission of users using specific commands.
 // By implementing this interface, you can create
@@ -10,5 +14,5 @@ type PermissionHandler interface {
 	// permitted to use this command or an error, if the permission check
 	// has failed for any reason, which will automatically count as
 	// 'no permission'.
-	CheckUserPermission(cmdArgs *CommandArgs, cmdInstance Command) (bool, error)
+	CheckUserPermission(cmdArgs *CommandArgs, s *discordgo.Session, cmdInstance Command) (bool, error)
 }

@@ -1,21 +1,28 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
-	cmds ".."
-	"./commands/testcmd"
 	"github.com/bwmarrin/discordgo"
+	"github.com/zekroTJA/discordgocmds"
+	"github.com/zekroTJA/discordgocmds/example/commands"
+)
+
+var (
+	flagToken = flag.String("t", "", "bot token")
 )
 
 func main() {
-	session, _ := discordgo.New("Bot NDE5ODM3NDcyMDQ2ODQxODY2.Duyx9A.i0FjveuEJhC2lIzC90KPIV_jwDc")
+	flag.Parse()
 
-	cmdHandler := cmds.New(session, new(TestDatabase), cmds.NewCmdHandlerOptions())
-	cmdHandler.RegisterCommand(new(testcmd.TestCmd))
+	session, _ := discordgo.New("Bot " + *flagToken)
+
+	cmdHandler := discordgocmds.New(session, new(TestDatabase), discordgocmds.NewCmdHandlerOptions())
+	cmdHandler.RegisterCommand(new(commands.TestCmd))
 
 	session.Open()
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")

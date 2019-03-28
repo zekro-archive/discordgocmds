@@ -106,7 +106,7 @@ func (c *CmdHandler) messageHandler(s *discordgo.Session, e *discordgo.MessageCr
 			Session:    s,
 			User:       e.Author,
 		}
-		hasPerm, err := c.permHandler.CheckUserPermission(cmdArgs, cmdInstance)
+		hasPerm, err := c.permHandler.CheckUserPermission(cmdArgs, s, cmdInstance)
 		if err != nil {
 			c.sendEmbedError(channel.ID, fmt.Sprintf("Failed getting permission von database: ```\n%s\n```", err.Error()), "Permission Error")
 			return

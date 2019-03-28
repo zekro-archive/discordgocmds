@@ -8,7 +8,7 @@ type DatabaseMiddleware interface {
 	// GetUserPermissionLevel returns the requested users
 	// permission level number from the database or
 	// and error, if the request failed for some reason.
-	GetUserPermissionLevel(userID string) (int, error)
+	GetUserPermissionLevel(userID string, roles []string) (int, error)
 	// GetGuildPrefix returns the requested guilds custom
 	// prefix, if set. If the prefix was not set on the
 	// guild, the function must return an empty string ("").
