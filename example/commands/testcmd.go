@@ -17,6 +17,10 @@ func (t *TestCmd) GetHelp() string {
 	return ""
 }
 
+func (t *TestCmd) GetGroup() string {
+	return discordgocmds.GroupModeration
+}
+
 func (t *TestCmd) GetPermission() int {
 	return 4
 }

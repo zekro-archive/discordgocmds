@@ -35,6 +35,7 @@ func New(session *discordgo.Session, dbMiddleware DatabaseMiddleware, options *C
 	}
 	c.discordSession.AddHandler(c.messageHandler)
 	c.discordSession.AddHandler(c.readyHandler)
+	c.RegisterCommand(new(CmdHelp))
 	return c
 }
 
