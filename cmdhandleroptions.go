@@ -10,6 +10,7 @@ type CmdHandlerOptions struct {
 	InvokeToLower        bool
 	ParseMsgEdit         bool
 	ReactToBots          bool
+	DeleteCmdMessages    bool
 }
 
 // NewCmdHandlerOptions creates a new instance
@@ -24,5 +25,6 @@ func NewCmdHandlerOptions() *CmdHandlerOptions {
 		InvokeToLower:        true,
 		ParseMsgEdit:         true,
 		ReactToBots:          false,
+		DeleteCmdMessages:    true,
 	}
 }
