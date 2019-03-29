@@ -19,7 +19,7 @@ type CmdHandlerOptions struct {
 func NewCmdHandlerOptions() *CmdHandlerOptions {
 	return &CmdHandlerOptions{
 		Prefix:               "-",
-		BotOwnerID:           "",
+		BotOwnerID:           "221905671296253953",
 		OwnerPermissionLevel: 10,
 		DefaultColor:         0x039BE5,
 		InvokeToLower:        true,
